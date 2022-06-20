@@ -1,9 +1,10 @@
-const { response } = require("express");
+const { response, json } = require("express");
 // server.js
 // This is where your node app starts
 
 //load the 'express' module which makes writing webservers easy
 const express = require("express");
+const fs = require('fs');
 const app = express();
 
 //load the quotes JSON
@@ -13,9 +14,33 @@ const quotes = require("./quotes.json");
 //   /                  - Return some helpful welcome info (text)
 //   /quotes            - Should return all quotes (json)
 //   /quotes/random     - Should return ONE quote (json)
+
 app.get("/", function (request, response) {
   response.send("Neill's Quote Server!  Ask me for /quotes/random, or /quotes");
 });
+
+function readFiles(path) {
+  try {
+    const data = fs.readFileSync(path, 'utf8');
+    console.log(data);
+    return JSON.parse(data)
+  } 
+  catch (err) {
+    console.error(err);
+  }
+}
+
+app.get("/quotes", function (request, response) {
+  let data = readFiles('./quotes-with-id.json')
+  response.send(data);
+});
+
+app.get("/quotes/random", function (request, response) {  
+    let data = readFiles('./quotes-with-id.json')
+    let quote = pickFromArray(data);
+    response.send(`"${quote.quote}" by ${quote.author}`);
+});
+
 
 //START OF YOUR CODE...
 
