@@ -19,10 +19,12 @@ app.get("/", function (request, response) {
   response.send("Neill's Quote Server!  Ask me for /quotes/random, or /quotes");
 });
 
+// read json file function
+
 function readFiles(path) {
   try {
     const data = fs.readFileSync(path, 'utf8');
-    console.log(data);
+    //console.log(data);
     return JSON.parse(data)
   } 
   catch (err) {
@@ -30,17 +32,43 @@ function readFiles(path) {
   }
 }
 
+// all quotes route
+
 app.get("/quotes", function (request, response) {
-  let data = readFiles('./quotes-with-id.json')
+  let data = readFiles('./quotes-with-id.json');
   response.send(data);
 });
 
+// random quote route
+
 app.get("/quotes/random", function (request, response) {  
-    let data = readFiles('./quotes-with-id.json')
+    let data = readFiles('./quotes-with-id.json');
     let quote = pickFromArray(data);
     response.send(`"${quote.quote}" by ${quote.author}`);
 });
 
+// search route
+
+app.get("/quotes/search", function (request, response) {  
+  let data = readFiles('./quotes-with-id.json')
+  let result = []
+  const term = request.query.term;
+  const quote = request.query.quote;
+  const author = request.query.author;
+
+  for (let i = 0; i < data.length; i++) {
+    if (data[i]["quote"].includes(term) || data[i]["author"].includes(term)) {
+      result.push(data[i]["quote"] + " by " + data[i]["author"])
+    }
+    if (data[i]["quote"].includes(quote)) {
+      result.push(data[i]["quote"] + " by " + data[i]["author"])
+    }
+    if (data[i]["author"].includes(author)) {
+      result.push(data[i]["quote"] + " by " + data[i]["author"])
+    }
+  }
+  response.send(result);
+});
 
 //START OF YOUR CODE...
 
