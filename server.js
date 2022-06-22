@@ -44,7 +44,7 @@ app.get("/quotes", function (request, response) {
 app.get("/quotes/random", function (request, response) {  
     let data = readFiles('./quotes-with-id.json');
     let quote = pickFromArray(data);
-    response.send(`"${quote.quote}" by ${quote.author}`);
+    response.send(quote);
 });
 
 // search route
@@ -58,13 +58,13 @@ app.get("/quotes/search", function (request, response) {
 
   for (let i = 0; i < data.length; i++) {
     if (data[i]["quote"].includes(term) || data[i]["author"].includes(term)) {
-      result.push(data[i]["quote"] + " by " + data[i]["author"])
+      result.push(data[i])
     }
     if (data[i]["quote"].includes(quote)) {
-      result.push(data[i]["quote"] + " by " + data[i]["author"])
+      result.push(data[i])
     }
     if (data[i]["author"].includes(author)) {
-      result.push(data[i]["quote"] + " by " + data[i]["author"])
+      result.push(data[i])
     }
   }
   response.send(result);
